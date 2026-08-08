@@ -52,13 +52,13 @@ Completed:
 - Project restructured into a proper `src/task_management_application` package.
 - PostgreSQL database connection configured via SQLAlchemy: engine, session factory, and declarative base set up in `utils/db.py`, with connection settings loaded from `.env` through `utils/settings.py`.
 - `main.py` creates all database tables on startup and registers the tasks router.
-- Tasks module implemented end to end: `TaskModel` (ORM model), `TaskSchema` (pydantic schema), controller functions to create and list tasks, and `POST /tasks/create` / `GET /tasks/all_tasks` endpoints.
+- Tasks module implemented end to end: `TaskModel` (ORM model), `TaskSchema` (pydantic schema), controller functions to create tasks, list all tasks, and retrieve a single task by ID, with matching `POST /tasks/create`, `GET /tasks/all_tasks`, and `GET /tasks/all_tasks/{id}` endpoints.
 
 Outstanding:
 
 - User module (`models.py`, `dtos.py`, `controller.py`, `router.py`) is still scaffolded but empty; no user endpoints or router are registered on the app yet.
 - `utils/constant.py` and `utils/helpers.py` are still empty.
-- No endpoints yet to retrieve a single task, update, or delete tasks.
+- No endpoints yet to update or delete tasks.
 - No authentication yet.
 - No tests yet.
 
@@ -68,6 +68,7 @@ Outstanding:
 |--------|-----------------|--------------------|
 | POST   | `/tasks/create` | Create a new task |
 | GET    | `/tasks/all_tasks` | Retrieve all tasks |
+| GET    | `/tasks/all_tasks/{id}` | Retrieve a single task by ID |
 
 ## Getting Started
 
@@ -107,7 +108,7 @@ Once running, the app will be available at `http://127.0.0.1:8000`, with interac
 
 ## Roadmap
 
-- Add endpoints to retrieve a single task, update, and delete tasks
+- Add endpoints to update and delete tasks
 - Implement the user module (model, schema, controller, router) and register it on the app
 - Add authentication
 - Populate `utils/constant.py` and `utils/helpers.py` as shared logic emerges

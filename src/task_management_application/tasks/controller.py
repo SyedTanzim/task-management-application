@@ -20,3 +20,13 @@ def create_task(body:TaskSchema, db:session):
 def get_task(db:session):
     tasks = db.query(TaskModel).all()
     return {"status":"All Tasks", "data":tasks}
+
+def get_a_task(id:int, db:session):
+    tasks = db.query(TaskModel).all()
+    print(tasks)
+    print(type(tasks))
+    print(type(tasks[0]))
+    for task in tasks:
+        if task.id == id:
+            return {"status":"All Tasks", "data":task}
+    return {"status":"Task Not Found"}
