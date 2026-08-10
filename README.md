@@ -2,7 +2,7 @@
 
 A task management backend built with **FastAPI** and **Python 3.13**, managed with **uv**.
 
-**Status:** Early scaffold. The project structure is in place, but the core logic (models, routes, database) has not been implemented yet. See [Current Stage](#current-stage) below.
+**Status:** Early scaffold. The tasks domain is fully wired up (CRUD), but the user domain, authentication, and tests are not implemented yet. See [Current Stage](#current-stage) below.
 
 ## Tech Stack
 
@@ -52,23 +52,24 @@ Completed:
 - Project restructured into a proper `src/task_management_application` package.
 - PostgreSQL database connection configured via SQLAlchemy: engine, session factory, and declarative base set up in `utils/db.py`, with connection settings loaded from `.env` through `utils/settings.py`.
 - `main.py` creates all database tables on startup and registers the tasks router.
-- Tasks module implemented end to end: `TaskModel` (ORM model), `TaskSchema` (pydantic schema), controller functions to create tasks, list all tasks, and retrieve a single task by ID, with matching `POST /tasks/create`, `GET /tasks/all_tasks`, and `GET /tasks/all_tasks/{id}` endpoints.
+- Tasks module implemented end to end with full CRUD: `TaskModel` (ORM model), `TaskSchema` (pydantic schema), and controller functions to create, list, retrieve, update, and delete tasks, with matching `POST /tasks/create`, `GET /tasks/all_tasks`, `GET /tasks/all_tasks/{id}`, `PUT /tasks/update_task/{id}`, and `DELETE /tasks/delete_task/{id}` endpoints.
 
 Outstanding:
 
 - User module (`models.py`, `dtos.py`, `controller.py`, `router.py`) is still scaffolded but empty; no user endpoints or router are registered on the app yet.
 - `utils/constant.py` and `utils/helpers.py` are still empty.
-- No endpoints yet to update or delete tasks.
 - No authentication yet.
 - No tests yet.
 
 ## Current API Endpoints
 
-| Method | Path            | Description       |
-|--------|-----------------|--------------------|
-| POST   | `/tasks/create` | Create a new task |
-| GET    | `/tasks/all_tasks` | Retrieve all tasks |
-| GET    | `/tasks/all_tasks/{id}` | Retrieve a single task by ID |
+| Method | Path                       | Description                   |
+|--------|----------------------------|--------------------------------|
+| POST   | `/tasks/create`            | Create a new task             |
+| GET    | `/tasks/all_tasks`         | Retrieve all tasks            |
+| GET    | `/tasks/all_tasks/{id}`    | Retrieve a single task by ID  |
+| PUT    | `/tasks/update_task/{id}`  | Update a task by ID           |
+| DELETE | `/tasks/delete_task/{id}`  | Delete a task by ID           |
 
 ## Getting Started
 
@@ -98,17 +99,6 @@ Once running, the app will be available at `http://127.0.0.1:8000`, with interac
 
 ## Roadmap
 
-- Define `User` and `Task` models
-- Implement DTOs/schemas for request and response validation
-- Implement controller logic for tasks and users
-- Define routers and register them on the FastAPI app in `main.py`
-- Set up database connection in `utils/db.py`
-- Add authentication
-- Add tests
-
-## Roadmap
-
-- Add endpoints to update and delete tasks
 - Implement the user module (model, schema, controller, router) and register it on the app
 - Add authentication
 - Populate `utils/constant.py` and `utils/helpers.py` as shared logic emerges
