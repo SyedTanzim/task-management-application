@@ -16,11 +16,11 @@ def create_task(body:TaskSchema, db:session):
     db.commit()
     db.refresh(new_task)
 
-    return {"status": "Task is created", "data":new_task}
+    return new_task
 
-def get_task(db:session):
+def get_all_task(db:session):
     tasks = db.query(TaskModel).all()
-    return {"status":"All Tasks", "data":tasks}
+    return tasks
 
 def get_a_task(id:int, db:session):
     task = db.get(TaskModel, id)
@@ -28,18 +28,7 @@ def get_a_task(id:int, db:session):
     if not task:
         raise HTTPException(404, detail="Task Not Found")
     
-    return {"status": "Task Found", "data": task}
-
-def delete_task(id: int, db: session):
-    task = db.get(TaskModel, id)
-
-    if not task:
-        raise HTTPException(404, detail="Task Not Found")
-
-    db.delete(task)
-    db.commit()
-
-    return {"status": "Task Deleted"}
+    return task
 
 def update_task(body: TaskSchema, id: int, db: session):
     task = db.get(TaskModel, id)
@@ -55,7 +44,15 @@ def update_task(body: TaskSchema, id: int, db: session):
     db.commit()
     db.refresh(task)
 
-    return {
-        "status": "Task Updated Successfully",
-        "data": task
-    }
+    return task
+
+def delete_task(id: int, db: session):
+    task = db.get(TaskModel, id)
+
+    if not task:
+        raise HTTPException(404, detail="Task Not Found")
+
+    db.delete(task)
+    db.commit()
+
+    return None
