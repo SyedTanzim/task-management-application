@@ -6,5 +6,3 @@ class Settings(BaseSettings):
     db_connection: str
 
 settings = Settings()
-
-print(settings.db_connection)
