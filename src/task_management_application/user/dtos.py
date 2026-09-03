@@ -5,3 +5,10 @@ class UserSchema(BaseModel):
     userName: str
     password: str
     email: str
+
+
+class UserResponseSchema(BaseModel):
+    id: int
+    email: str
+    name: str
+    userName: str
