@@ -1,5 +1,4 @@
 import jwt
-from jwt.exceptions import InvalidTokenError
 from pwdlib import PasswordHash
 from fastapi import HTTPException, status, Request
 from datetime import datetime, timedelta
@@ -7,10 +6,7 @@ from sqlalchemy.orm import Session
 from task_management_application.utils.settings import settings
 from task_management_application.user.dtos import UserSchema, loginSchema
 from task_management_application.user.models import UserModel
-
-SECRET_KEY = "Ss0ZKnq8RiKT+02EkO9+mlG8CGUo5RFrnOEDHvhrj7E="
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+from task_management_application.utils.helpers import is_authenticated
 
 password_hash = PasswordHash.recommended()
 
@@ -47,29 +43,13 @@ def login_user(body:loginSchema, db:Session):
     user = db.query(UserModel).filter(UserModel.userName == body.userName).first()
 
     if not user:
-        raise HTTPException (status_code=status.HTTP_401_UNAUTHORIZED, detail = "wrong username.")
+        raise HTTPException (status_code=status.HTTP_401_UNAUTHORIZED, detail = "Invalid username or password")
 
     if not verify_password(body.password, user.hash_password):
-        raise HTTPException (status_code=status.HTTP_401_UNAUTHORIZED, detail = "Wrong password.")
+        raise HTTPException (status_code=status.HTTP_401_UNAUTHORIZED, detail = "Invalid username or password")
 
     expire_time = datetime.now() + timedelta(minutes = settings.expire_time)
 
     token = jwt.encode({"_id":user.id, "exp": expire_time.timestamp()}, settings.secret_key, algorithm=settings.algorithm)
 
     return {"token":token}
-
-def is_authenticated(request: Request, db:Session):
-    try:
-        token = request.headers.get("authorization")
-        data = jwt.decode(token, settings.secret_key, settings.algorithm)
-        
-        user_id = (data.get("_id"))
-
-        user = db.query(UserModel).filter(UserModel.id == user_id).first()
-
-        if not user:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
-
-        return user
-    except InvalidTokenError:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Session expired")
