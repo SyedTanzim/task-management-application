@@ -1,6 +1,7 @@
 import jwt
+from jwt.exceptions import InvalidTokenError
 from pwdlib import PasswordHash
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Request
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
 from task_management_application.utils.settings import settings
@@ -51,8 +52,24 @@ def login_user(body:loginSchema, db:Session):
     if not verify_password(body.password, user.hash_password):
         raise HTTPException (status_code=status.HTTP_401_UNAUTHORIZED, detail = "Wrong password.")
 
-    expire_time = datetime.now() + timedelta(minutes=settings.expire_time)
+    expire_time = datetime.now() + timedelta(minutes = settings.expire_time)
 
-    token = jwt.encode({"_id":user.id, "exp": expire_time}, settings.secret_key, algorithm=settings.algorithm)
+    token = jwt.encode({"_id":user.id, "exp": expire_time.timestamp()}, settings.secret_key, algorithm=settings.algorithm)
 
     return {"token":token}
+
+def is_authenticated(request: Request, db:Session):
+    try:
+        token = request.headers.get("authorization")
+        data = jwt.decode(token, settings.secret_key, settings.algorithm)
+        
+        user_id = (data.get("_id"))
+
+        user = db.query(UserModel).filter(UserModel.id == user_id).first()
+
+        if not user:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
+
+        return user
+    except InvalidTokenError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Session expired")
