@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, Boolean, String
+from sqlalchemy import Column, ForeignKey, Integer, Boolean, String
 from task_management_application.utils.db import base
 
 class TaskModel(base):
@@ -8,3 +8,5 @@ class TaskModel(base):
     title = Column(String)
     description = Column(String)
     is_completed = Column(Boolean, default=False)
+
+    user_id = Column(Integer, ForeignKey("user_table.id", ondelete="CASCADE"), nullable=False)

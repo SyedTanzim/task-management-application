@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, Boolean, DateTime, String
+from sqlalchemy import Column, ForeignKey, Integer, Boolean, DateTime, String
 from task_management_application.utils.db import base
 
 class UserModel(base):
