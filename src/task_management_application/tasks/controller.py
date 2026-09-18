@@ -20,23 +20,29 @@ def create_task(body:TaskSchema, db:session, user:UserModel):
 
     return new_task
 
-def get_all_task(db:session):
-    tasks = db.query(TaskModel).all()
+def get_all_task(db:session, user:UserModel):
+    tasks = db.query(TaskModel).filter(TaskModel.user_id == user.id).all()
     return tasks
 
-def get_a_task(id:int, db:session):
+def get_a_task(id:int, db:session, user:UserModel):
     task = db.get(TaskModel, id)
 
     if not task:
-        raise HTTPException(404, detail="Task Not Found")
+        raise HTTPException(404, detail="Task not found")
+
+    if task.user_id != user.id:
+        raise HTTPException(401, detail="You do not have permission to access this task")
     
     return task
 
-def update_task(body: TaskSchema, id: int, db: session):
+def update_task(body: TaskSchema, id: int, db: session, user:UserModel):
     task = db.get(TaskModel, id)
 
     if not task:
-        raise HTTPException(404, detail="Task Not Found")
+        raise HTTPException(404, detail="Task not found")
+
+    if task.user_id != user.id:
+        raise HTTPException(401, detail="You do not have permission to update this task")
 
     body_data = body.model_dump()
 
@@ -48,11 +54,14 @@ def update_task(body: TaskSchema, id: int, db: session):
 
     return task
 
-def delete_task(id: int, db: session):
+def delete_task(id: int, db: session, user:UserModel):
     task = db.get(TaskModel, id)
 
     if not task:
-        raise HTTPException(404, detail="Task Not Found")
+        raise HTTPException(404, detail="Task not found")
+
+    if task.user_id != user.id:
+        raise HTTPException(401, detail="You do not have permission to delete this task")
 
     db.delete(task)
     db.commit()

@@ -16,16 +16,16 @@ def create_task(body:TaskSchema, db:Session = Depends(get_db), user:UserModel = 
 
 @task_routes.get("/all_tasks", response_model = List[TaskResponseSchema], status_code = status.HTTP_200_OK)
 def get_all_tasks(db:Session = Depends(get_db), user:UserModel = Depends(is_authenticated)):
-    return controller.get_all_task(db)
+    return controller.get_all_task(db, user)
 
 @task_routes.get("/all_tasks/{id}", response_model = TaskResponseSchema, status_code = status.HTTP_200_OK)
 def get_a_task(id:int, db:Session = Depends(get_db), user:UserModel = Depends(is_authenticated)):
-    return controller.get_a_task(id, db)
+    return controller.get_a_task(id, db, user)
 
 @task_routes.put("/update_task/{id}", response_model = TaskResponseSchema, status_code = status.HTTP_200_OK)
 def update_task(body:TaskSchema, id:int, db:Session = Depends(get_db), user:UserModel = Depends(is_authenticated)):
-    return controller.update_task(body, id, db)
+    return controller.update_task(body, id, db, user)
 
 @task_routes.delete("/delete_task/{id}", response_model = None, status_code = status.HTTP_204_NO_CONTENT)
 def delete_task(id:int, db:Session = Depends(get_db), user:UserModel = Depends(is_authenticated)):
-    return controller.delete_task(id, db)
+    return controller.delete_task(id, db, user)
